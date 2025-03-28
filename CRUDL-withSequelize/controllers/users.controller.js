@@ -1,7 +1,7 @@
 const giveResponse = require("../globalHandler/globalResponseFunction");
 const { validateUserData } = require("../middleware/joiValidation");
 const { Users } = require("../model/users.model");
-const { Op } = require("sequelize");
+
 //  adding user to database
 async function addUser(req, res) {
   const { username, password } = req.body;
