@@ -15,23 +15,13 @@ const swaggerDocument = require("./Documentation/swagger.json");
 
 const PORT = 9100;
 
-// Sequalise
-
 ///////// ----------------- MIDDLEWARES----------------- /////////
-
-// helmet
-app.use(helmet());
-//
-// Converting to json()
-app.use(express.json());
-//
-//swagger documentation
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-//
-// Checking response time
 app.use(responseTime);
+app.use(helmet());
+app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// get - post - put - patch  books
+// get - post - put - patch - delete  books
 app.use("/register", userRouter);
 app.use("/books", booksRouter);
 
