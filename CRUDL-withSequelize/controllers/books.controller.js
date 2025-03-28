@@ -50,11 +50,8 @@ async function getBook(req, res, next) {
 // delete('/books/{id}')
 async function deleteBook(req, res, next) {
   const bookId = req.params.id;
-  const book = await Book.findAll({
-    where: {
-      id: bookId,
-    },
-  });
+  const findbook = await Book.findByPk(bookId);
+
   const deletedRows = await Book.destroy({
     where: {
       id: bookId,
@@ -63,7 +60,7 @@ async function deleteBook(req, res, next) {
   if (deletedRows > 0) {
     giveResponse(200, res, {
       message: "Book was deleted Successfully",
-      Book: book,
+      Book: findbook,
     });
   } else {
     giveResponse(404, res, { message: "Book was not found" });
