@@ -1,4 +1,4 @@
-const database = require("../model/books.model");
+const booksDatabase = require("../model/books.model");
 const validateInputData = require("../middleware/joiValidation");
 const giveResponse = require("../globalHandler/globalResponseFunction");
 
@@ -13,7 +13,7 @@ function getBook(req, res) {
     query = `SELECT * FROM books WHERE  id=${productId} && status = 'available'`;
   }
 
-  database.query(query, (error, results) => {
+  booksDatabase.query(query, (error, results) => {
     if (error) {
       console.log(error);
       giveResponse(400, res, {
@@ -38,7 +38,7 @@ function getBooks(req, res) {
   } else {
     query = "SELECT * FROM books WHERE status = 'available'";
   }
-  database.query(query, (error, results) => {
+  booksDatabase.query(query, (error, results) => {
     if (error) {
       console.log(error);
       giveResponse(400, res, {
@@ -55,7 +55,7 @@ function getBooks(req, res) {
 function addBook(req, res) {
   const { name, author, publishyear, status } = req.body;
   const bookStatus = status || "available";
-  database.query(
+  booksDatabase.query(
     "SELECT * FROM books WHERE name = ?", // Changed to search by name
     [name],
     (error, results) => {
@@ -76,7 +76,7 @@ function addBook(req, res) {
         giveResponse(400, res, response.error.details);
       } else {
         // if no error
-        database.query(
+        booksDatabase.query(
           `INSERT INTO books(name, author, publishyear,status) VALUES (?,?,?,?)`,
           [name, author, publishyear, bookStatus],
           (error, results) => {
@@ -102,7 +102,7 @@ function editBook(req, res) {
   const { name, author, publishyear, status } = req.body;
   const bookStatus = status || "available";
 
-  database.query(
+  booksDatabase.query(
     "SELECT * FROM books WHERE id = ?", // search by id
     [bookId],
     (error, results) => {
@@ -122,7 +122,7 @@ function editBook(req, res) {
         giveResponse(400, res, response.error.details);
       } else {
         // if no error
-        database.query(
+        booksDatabase.query(
           `UPDATE books SET name=?, author=?, publishyear=?, status=? WHERE id = ?`,
           [name, author, publishyear, bookStatus, bookId],
           (error, results) => {
@@ -147,12 +147,12 @@ function editBookData(req, res) {
   const bookId = req.params["id"];
   const { name, author, publishyear, status } = req.body;
 
-  database.query(
+  booksDatabase.query(
     "SELECT * FROM books WHERE name = ?", // Changed to search by name
     [name],
     (error, results) => {
       if (error) {
-        return giveResponse(500, res, { error: "database error" });
+        return giveResponse(500, res, { error: "booksDatabase error" });
       }
       if (results.length === 0) {
         return giveResponse(409, res, {
@@ -204,10 +204,10 @@ function editBookData(req, res) {
         updateValues.push(bookId);
 
         // name=?, author=?, publishyear=?, status=? WHERE id ?, [name,.., id], ()=>{}
-        database.query(updateQuery, updateValues, (error, results) => {
+        booksDatabase.query(updateQuery, updateValues, (error, results) => {
           if (error) {
-            console.error("Database error:", error);
-            return giveResponse(500, res, { error: "Database error" });
+            console.error("booksDatabase error:", error);
+            return giveResponse(500, res, { error: "booksDatabase error" });
           }
 
           if (results.affectedRows === 0) {
@@ -226,12 +226,12 @@ function deleteBook(req, res) {
   const productId = req.params["id"];
 
   // remove the book
-  database.query(
+  booksDatabase.query(
     `DELETE FROM books WHERE id=?`,
     [productId],
     (error, results) => {
       if (error) {
-        return giveResponse(500, res, { error: "Database error" });
+        return giveResponse(500, res, { error: "booksDatabase error" });
       }
       if (results.affectedRows === 0) {
         return giveResponse(404, res, { error: "Book not found" });
